@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Hebrew Verbs — Dictation</title>
+  <title>English Dictation Practice</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -20,529 +20,477 @@
     header {
       width: 100%;
       text-align: center;
-      padding: 2rem 1rem 1rem;
+      padding: 1.8rem 1rem 1rem;
       background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
       border-bottom: 1px solid #2a2a4a;
     }
 
-    header h1 {
-      font-size: 1.8rem;
-      color: #a78bfa;
-      letter-spacing: 0.05em;
-    }
+    header h1 { font-size: 1.6rem; color: #a78bfa; }
+    header p  { color: #7c7c9a; margin-top: 0.3rem; font-size: 0.85rem; }
 
-    header p {
-      color: #7c7c9a;
-      margin-top: 0.3rem;
-      font-size: 0.9rem;
-    }
-
-    /* Mode tabs */
     .tabs {
-      display: flex;
-      gap: 0.5rem;
-      margin: 1.5rem 0 0;
+      display: flex; gap: 0.4rem;
+      margin: 1.2rem 0 0;
       background: #16213e;
       padding: 0.3rem;
       border-radius: 12px;
     }
 
     .tab {
-      padding: 0.5rem 1.2rem;
-      border: none;
-      border-radius: 9px;
-      background: transparent;
-      color: #7c7c9a;
-      cursor: pointer;
-      font-size: 0.9rem;
+      padding: 0.45rem 1.1rem;
+      border: none; border-radius: 9px;
+      background: transparent; color: #7c7c9a;
+      cursor: pointer; font-size: 0.88rem;
       transition: all 0.2s;
     }
 
-    .tab.active {
-      background: #a78bfa;
-      color: #fff;
-      font-weight: 600;
-    }
+    .tab.active { background: #a78bfa; color: #fff; font-weight: 600; }
 
     main {
       width: 100%;
-      max-width: 700px;
+      max-width: 600px;
       padding: 2rem 1rem;
     }
 
-    /* ── FLASHCARD MODE ── */
-    .flashcard-area { display: none; flex-direction: column; align-items: center; gap: 1.5rem; }
-    .flashcard-area.visible { display: flex; }
+    /* ── SHARED ── */
+    .area { display: none; flex-direction: column; gap: 1.4rem; }
+    .area.visible { display: flex; }
 
-    .progress-bar-wrap {
-      width: 100%;
-      background: #1e1e30;
-      border-radius: 99px;
-      height: 6px;
+    .progress-wrap { width: 100%; background: #1e1e30; border-radius: 99px; height: 5px; }
+    .progress-fill { height: 5px; background: #a78bfa; border-radius: 99px; transition: width 0.4s ease; }
+
+    .top-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.82rem; color: #7c7c9a;
     }
 
-    .progress-bar {
-      height: 6px;
-      background: #a78bfa;
-      border-radius: 99px;
-      transition: width 0.4s ease;
+    .score-badge {
+      background: #1e1e38; border: 1px solid #3a3a5c;
+      padding: 0.25rem 0.7rem; border-radius: 99px;
+      font-size: 0.82rem; color: #a78bfa; font-weight: 600;
     }
 
-    .progress-text {
-      font-size: 0.8rem;
-      color: #7c7c9a;
-      align-self: flex-end;
-    }
-
-    .card-scene {
-      width: 100%;
-      height: 220px;
-      perspective: 1000px;
-      cursor: pointer;
-    }
-
-    .card {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.55s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .card.flipped { transform: rotateY(180deg); }
-
-    .card-face {
-      position: absolute;
-      inset: 0;
-      border-radius: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      user-select: none;
-    }
-
-    .card-front {
-      background: linear-gradient(135deg, #1e1e38 0%, #252545 100%);
+    /* ── DICTATION ── */
+    .he-card {
+      background: linear-gradient(135deg, #1e1e38, #252548);
       border: 1px solid #3a3a5c;
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+      text-align: center;
     }
 
-    .card-back {
-      background: linear-gradient(135deg, #2d1b4e 0%, #3b2060 100%);
-      border: 1px solid #6d4ab0;
-      transform: rotateY(180deg);
+    .he-label {
+      font-size: 0.72rem; text-transform: uppercase;
+      letter-spacing: 0.12em; color: #6b6b8a; margin-bottom: 0.8rem;
     }
 
-    .card-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #6b6b8a;
-      margin-bottom: 0.8rem;
-    }
-
-    .card-word-en {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #e8e8f0;
-    }
-
-    .card-word-he {
-      font-size: 2.4rem;
-      font-weight: 700;
-      color: #c4b5fd;
-      direction: rtl;
+    .he-word {
+      font-size: 2.6rem; font-weight: 700;
+      color: #c4b5fd; direction: rtl;
       font-family: 'David Libre', 'Times New Roman', serif;
+      line-height: 1.2;
     }
 
-    .card-hint {
-      margin-top: 0.6rem;
-      font-size: 0.8rem;
-      color: #6b6b8a;
+    .input-wrap {
+      position: relative;
     }
 
-    .nav-row {
-      display: flex;
-      gap: 1rem;
+    #answerInput {
       width: 100%;
-      justify-content: center;
+      padding: 1rem 1.2rem;
+      font-size: 1.3rem;
+      background: #1a1a2e;
+      border: 2px solid #3a3a5c;
+      border-radius: 14px;
+      color: #e8e8f0;
+      outline: none;
+      transition: border-color 0.2s;
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+
+    #answerInput:focus { border-color: #a78bfa; }
+    #answerInput.correct-input { border-color: #34d399; background: #0a2a1a; }
+    #answerInput.wrong-input   { border-color: #f87171; background: #2a0a0a; }
+
+    .feedback-box {
+      min-height: 2.5rem;
+      text-align: center;
+    }
+
+    .diff-display {
+      font-size: 1.4rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      line-height: 1.8;
+    }
+
+    .diff-display .ok   { color: #34d399; }
+    .diff-display .bad  { color: #f87171; text-decoration: underline; }
+    .diff-display .miss { color: #f87171; font-style: italic; }
+
+    .feedback-msg {
+      font-size: 0.9rem;
+      margin-top: 0.4rem;
+    }
+
+    .btn-row {
+      display: flex; gap: 0.8rem; justify-content: center;
     }
 
     .btn {
-      padding: 0.65rem 1.8rem;
-      border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
+      padding: 0.7rem 2rem;
+      border: none; border-radius: 11px;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: all 0.15s;
     }
 
-    .btn-ghost {
-      background: #1e1e30;
-      color: #a0a0c0;
-      border: 1px solid #2e2e48;
-    }
-
-    .btn-ghost:hover { background: #252540; }
-
-    .btn-primary {
-      background: #a78bfa;
-      color: #fff;
-    }
-
+    .btn-primary { background: #a78bfa; color: #fff; }
     .btn-primary:hover { background: #9270f0; }
+    .btn-ghost { background: #1e1e30; color: #a0a0c0; border: 1px solid #2e2e48; }
+    .btn-ghost:hover { background: #252540; }
+    .btn-green { background: #34d399; color: #0a1f14; }
+    .btn-green:hover { background: #2ec48d; }
 
-    .btn-success { background: #34d399; color: #0f2a1e; }
-    .btn-danger  { background: #f87171; color: #2a0a0a; }
+    /* ── RESULTS ── */
+    .results-area { display: none; flex-direction: column; align-items: center; gap: 1.4rem; }
+    .results-area.visible { display: flex; }
 
-    /* ── QUIZ MODE ── */
-    .quiz-area { display: none; flex-direction: column; gap: 1.5rem; }
-    .quiz-area.visible { display: flex; }
-
-    .quiz-question {
-      text-align: center;
-      background: #1e1e38;
-      border: 1px solid #3a3a5c;
-      border-radius: 20px;
-      padding: 2rem;
+    .result-big {
+      font-size: 3.5rem; text-align: center;
     }
 
-    .quiz-question .qlabel {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #6b6b8a;
-      margin-bottom: 0.8rem;
+    .result-score {
+      font-size: 1.8rem; font-weight: 700;
+      color: #a78bfa; text-align: center;
     }
 
-    .quiz-question .qword {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #e8e8f0;
+    .result-sub { color: #7c7c9a; font-size: 0.9rem; text-align: center; }
+
+    .mistakes-list {
+      width: 100%;
+      display: flex; flex-direction: column; gap: 0.5rem;
     }
 
-    .quiz-options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
+    .mistake-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #1e1e38; border: 1px solid #3a3a5c;
+      border-radius: 12px; padding: 0.9rem 1.2rem;
     }
 
-    .opt-btn {
-      padding: 1rem;
-      border-radius: 12px;
-      border: 1px solid #3a3a5c;
-      background: #1e1e38;
-      color: #e8e8f0;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.15s;
-      direction: rtl;
+    .mistake-row .mhe {
+      font-size: 1.1rem; color: #c4b5fd; direction: rtl;
       font-family: 'David Libre', 'Times New Roman', serif;
     }
 
-    .opt-btn:hover:not(:disabled) { border-color: #a78bfa; background: #252548; }
-    .opt-btn.correct { background: #14532d; border-color: #34d399; color: #86efac; }
-    .opt-btn.wrong   { background: #450a0a; border-color: #f87171; color: #fca5a5; }
-    .opt-btn:disabled { cursor: default; }
+    .mistake-row .men { font-size: 0.95rem; color: #e8e8f0; }
+    .mistake-row .myou { font-size: 0.9rem; color: #f87171; }
 
-    .quiz-feedback {
-      text-align: center;
-      font-size: 1.1rem;
-      font-weight: 600;
-      min-height: 1.5rem;
-      color: #a78bfa;
-    }
+    .mistake-label { font-size: 0.75rem; color: #6b6b8a; margin-bottom: 0.1rem; }
 
-    .quiz-score {
-      text-align: center;
-      color: #7c7c9a;
-      font-size: 0.9rem;
-    }
-
-    /* ── LIST MODE ── */
-    .list-area { display: none; flex-direction: column; gap: 0.5rem; }
-    .list-area.visible { display: flex; }
-
+    /* ── LIST ── */
     .word-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.4rem;
-      background: #1a1a2e;
-      border: 1px solid #2a2a40;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 1.3rem;
+      background: #1a1a2e; border: 1px solid #2a2a40;
       border-radius: 12px;
-      transition: border-color 0.15s;
     }
 
-    .word-row:hover { border-color: #a78bfa44; }
-
-    .word-row .en {
-      font-size: 1.05rem;
-      color: #c8c8e8;
-      font-weight: 500;
-    }
-
-    .word-row .num {
-      font-size: 0.75rem;
-      color: #44445a;
-      width: 1.5rem;
-    }
-
-    .word-row .he {
-      font-size: 1.2rem;
-      color: #c4b5fd;
-      direction: rtl;
+    .word-row .num { font-size: 0.72rem; color: #44445a; width: 1.5rem; }
+    .word-row .en  { font-size: 1rem; color: #c8c8e8; font-weight: 500; }
+    .word-row .he  {
+      font-size: 1.15rem; color: #c4b5fd; direction: rtl;
       font-family: 'David Libre', 'Times New Roman', serif;
     }
-
-    /* finish screen */
-    .finish-screen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      padding: 3rem 1rem;
-      text-align: center;
-    }
-
-    .finish-screen.visible { display: flex; }
-
-    .finish-screen .big { font-size: 4rem; }
-    .finish-screen h2 { font-size: 1.6rem; color: #a78bfa; }
-    .finish-screen p { color: #7c7c9a; }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Hebrew Verbs</h1>
-  <p>Dictation — 12 words</p>
+  <h1>English Dictation</h1>
+  <p>See the Hebrew — type the English</p>
   <div class="tabs">
-    <button class="tab active" onclick="switchMode('flash')">Flashcards</button>
-    <button class="tab" onclick="switchMode('quiz')">Quiz</button>
-    <button class="tab" onclick="switchMode('list')">Full List</button>
+    <button class="tab active" onclick="switchMode('dict')">Practice</button>
+    <button class="tab" onclick="switchMode('list')">Word List</button>
   </div>
 </header>
 
 <main>
 
-  <!-- FLASHCARD MODE -->
-  <div class="flashcard-area visible" id="flashArea">
-    <span class="progress-text" id="flashCounter">1 / 12</span>
-    <div class="progress-bar-wrap">
-      <div class="progress-bar" id="flashProgress" style="width:8.33%"></div>
+  <!-- DICTATION -->
+  <div class="area visible" id="dictArea">
+    <div class="top-row">
+      <span id="dictCounter">1 / 12</span>
+      <span class="score-badge" id="dictScore">✓ 0 &nbsp; ✗ 0</span>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="dictProgress" style="width:8.33%"></div>
     </div>
 
-    <div class="card-scene" onclick="flipCard()">
-      <div class="card" id="theCard">
-        <div class="card-face card-front">
-          <div class="card-label">English</div>
-          <div class="card-word-en" id="frontWord"></div>
-          <div class="card-hint">tap to reveal Hebrew</div>
-        </div>
-        <div class="card-face card-back">
-          <div class="card-label">Hebrew</div>
-          <div class="card-word-he" id="backWord"></div>
-          <div class="card-hint" id="backEn"></div>
-        </div>
-      </div>
+    <div class="he-card">
+      <div class="he-label">Hebrew</div>
+      <div class="he-word" id="dictHe"></div>
     </div>
 
-    <div class="nav-row">
-      <button class="btn btn-ghost" onclick="prevCard()">← Back</button>
-      <button class="btn btn-primary" onclick="nextCard()">Next →</button>
+    <div class="input-wrap">
+      <input
+        id="answerInput"
+        type="text"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"
+        placeholder="type in English…"
+        onkeydown="handleKey(event)"
+      />
     </div>
-  </div>
 
-  <!-- QUIZ MODE -->
-  <div class="quiz-area" id="quizArea">
-    <div class="quiz-score" id="quizScore">Score: 0 / 0</div>
-    <div class="quiz-question">
-      <div class="qlabel">What is the Hebrew for…</div>
-      <div class="qword" id="quizWord"></div>
-    </div>
-    <div class="quiz-options" id="quizOptions"></div>
-    <div class="quiz-feedback" id="quizFeedback"></div>
-    <div class="nav-row">
-      <button class="btn btn-primary" id="quizNextBtn" onclick="nextQuiz()" style="display:none">Next →</button>
+    <div class="feedback-box" id="feedbackBox"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" id="skipBtn" onclick="skipWord()">Skip</button>
+      <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">Check</button>
+      <button class="btn btn-green"   id="nextBtn" onclick="nextWord()" style="display:none">Next →</button>
     </div>
   </div>
 
-  <!-- LIST MODE -->
-  <div class="list-area" id="listArea"></div>
-
-  <!-- FINISH -->
-  <div class="finish-screen" id="finishScreen">
-    <div class="big">🎉</div>
-    <h2 id="finishTitle"></h2>
-    <p id="finishSub"></p>
-    <button class="btn btn-primary" onclick="restart()">Try again</button>
+  <!-- RESULTS -->
+  <div class="results-area" id="resultsArea">
+    <div class="result-big" id="resultEmoji"></div>
+    <div class="result-score" id="resultScore"></div>
+    <div class="result-sub" id="resultSub"></div>
+    <div class="mistakes-list" id="mistakesList"></div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="retryMistakes()" id="retryBtn">Retry mistakes</button>
+      <button class="btn btn-primary" onclick="restartFull()">Start over</button>
+    </div>
   </div>
+
+  <!-- WORD LIST -->
+  <div class="area" id="listArea"></div>
 
 </main>
 
 <script>
-const words = [
-  { en: 'to leave',    he: 'לעזוב'    },
-  { en: 'to bring',    he: 'להביא'    },
-  { en: 'to visit',    he: 'לבקר'     },
-  { en: 'to take',     he: 'לקחת'     },
-  { en: 'to study',    he: 'ללמוד'    },
-  { en: 'to wait',     he: 'לחכות'    },
-  { en: 'to write',    he: 'לכתוב'    },
-  { en: 'to hear',     he: 'לשמוע'    },
-  { en: 'to practice', he: 'להתאמן'   },
-  { en: 'to travel',   he: 'לנסוע'    },
-  { en: 'to listen',   he: 'להקשיב'   },
-  { en: 'to think',    he: 'לחשוב'    },
+const ALL_WORDS = [
+  { en: 'to leave',    he: 'לעזוב'  },
+  { en: 'to bring',    he: 'להביא'  },
+  { en: 'to visit',    he: 'לבקר'   },
+  { en: 'to take',     he: 'לקחת'   },
+  { en: 'to study',    he: 'ללמוד'  },
+  { en: 'to wait',     he: 'לחכות'  },
+  { en: 'to write',    he: 'לכתוב'  },
+  { en: 'to hear',     he: 'לשמוע'  },
+  { en: 'to practice', he: 'להתאמן' },
+  { en: 'to travel',   he: 'לנסוע'  },
+  { en: 'to listen',   he: 'להקשיב' },
+  { en: 'to think',    he: 'לחשוב'  },
 ];
-
-// ── FLASHCARD ──
-let flashIdx = 0;
-let flipped = false;
-
-function renderCard() {
-  const w = words[flashIdx];
-  document.getElementById('frontWord').textContent = w.en;
-  document.getElementById('backWord').textContent  = w.he;
-  document.getElementById('backEn').textContent    = w.en;
-  document.getElementById('flashCounter').textContent = `${flashIdx + 1} / ${words.length}`;
-  document.getElementById('flashProgress').style.width = `${((flashIdx + 1) / words.length) * 100}%`;
-  const card = document.getElementById('theCard');
-  card.classList.remove('flipped');
-  flipped = false;
-}
-
-function flipCard() {
-  flipped = !flipped;
-  document.getElementById('theCard').classList.toggle('flipped', flipped);
-}
-
-function nextCard() {
-  if (flashIdx < words.length - 1) { flashIdx++; renderCard(); }
-  else { showFinish('Flashcards done!', `You reviewed all ${words.length} words.`); }
-}
-
-function prevCard() {
-  if (flashIdx > 0) { flashIdx--; renderCard(); }
-}
-
-// ── QUIZ ──
-let quizIdx = 0;
-let quizOrder = [];
-let score = 0;
-let answered = false;
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
-function startQuiz() {
-  quizOrder = shuffle(words);
-  quizIdx = 0; score = 0; answered = false;
-  renderQuiz();
+let queue = [];
+let idx = 0;
+let correct = 0;
+let wrong = 0;
+let mistakes = [];   // {word, typed}
+let revealed = false;
+
+function startDict(wordList) {
+  queue    = shuffle(wordList);
+  idx      = 0; correct = 0; wrong = 0;
+  mistakes = []; revealed = false;
+  renderDict();
 }
 
-function renderQuiz() {
-  if (quizIdx >= quizOrder.length) {
-    showFinish('Quiz complete!', `You scored ${score} out of ${quizOrder.length}.`);
-    return;
+function renderDict() {
+  const w = queue[idx];
+  document.getElementById('dictHe').textContent   = w.he;
+  document.getElementById('dictCounter').textContent = `${idx + 1} / ${queue.length}`;
+  document.getElementById('dictProgress').style.width  = `${((idx + 1) / queue.length) * 100}%`;
+  document.getElementById('dictScore').innerHTML  = `✓ ${correct} &nbsp; ✗ ${wrong}`;
+
+  const inp = document.getElementById('answerInput');
+  inp.value = '';
+  inp.className = '';
+  inp.disabled = false;
+  inp.focus();
+
+  document.getElementById('feedbackBox').innerHTML = '';
+  document.getElementById('checkBtn').style.display = 'inline-block';
+  document.getElementById('skipBtn').style.display  = 'inline-block';
+  document.getElementById('nextBtn').style.display  = 'none';
+  revealed = false;
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter') {
+    if (document.getElementById('nextBtn').style.display !== 'none') nextWord();
+    else checkAnswer();
   }
-  answered = false;
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('quizNextBtn').style.display = 'none';
-  document.getElementById('quizScore').textContent = `Score: ${score} / ${quizIdx}`;
-
-  const current = quizOrder[quizIdx];
-  document.getElementById('quizWord').textContent = current.en;
-
-  // 4 options: correct + 3 random others
-  const others = shuffle(words.filter(w => w.he !== current.he)).slice(0, 3);
-  const options = shuffle([current, ...others]);
-
-  const container = document.getElementById('quizOptions');
-  container.innerHTML = '';
-  options.forEach(opt => {
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn';
-    btn.textContent = opt.he;
-    btn.onclick = () => checkAnswer(opt.he, current.he, btn);
-    container.appendChild(btn);
-  });
 }
 
-function checkAnswer(chosen, correct, btn) {
-  if (answered) return;
-  answered = true;
-  const allBtns = document.querySelectorAll('.opt-btn');
-  allBtns.forEach(b => {
-    b.disabled = true;
-    if (b.textContent === correct) b.classList.add('correct');
-  });
-  if (chosen === correct) {
-    score++;
-    document.getElementById('quizFeedback').textContent = '✓ Correct!';
-    document.getElementById('quizFeedback').style.color = '#34d399';
+function normalize(s) { return s.trim().toLowerCase().replace(/\s+/g, ' '); }
+
+function checkAnswer() {
+  const inp   = document.getElementById('answerInput');
+  const typed = normalize(inp.value);
+  if (!typed) { inp.focus(); return; }
+
+  const correct_ans = queue[idx].en;
+  const isCorrect   = typed === normalize(correct_ans);
+
+  inp.disabled = true;
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('skipBtn').style.display  = 'none';
+  document.getElementById('nextBtn').style.display  = 'inline-block';
+
+  if (isCorrect) {
+    inp.classList.add('correct-input');
+    correct++;
+    document.getElementById('feedbackBox').innerHTML =
+      `<div class="diff-display"><span class="ok">${escHtml(correct_ans)}</span></div>
+       <div class="feedback-msg" style="color:#34d399">Correct!</div>`;
   } else {
-    btn.classList.add('wrong');
-    document.getElementById('quizFeedback').textContent = `✗ The answer is ${correct}`;
-    document.getElementById('quizFeedback').style.color = '#f87171';
+    inp.classList.add('wrong-input');
+    wrong++;
+    mistakes.push({ word: queue[idx], typed });
+    document.getElementById('feedbackBox').innerHTML =
+      `<div class="diff-display">${buildDiff(typed, correct_ans)}</div>
+       <div class="feedback-msg" style="color:#7c7c9a">Correct: <strong style="color:#e8e8f0">${escHtml(correct_ans)}</strong></div>`;
   }
-  document.getElementById('quizNextBtn').style.display = 'inline-block';
+
+  document.getElementById('dictScore').innerHTML = `✓ ${correct} &nbsp; ✗ ${wrong}`;
 }
 
-function nextQuiz() { quizIdx++; renderQuiz(); }
+function skipWord() {
+  const correct_ans = queue[idx].en;
+  wrong++;
+  mistakes.push({ word: queue[idx], typed: '' });
+  const inp = document.getElementById('answerInput');
+  inp.disabled = true;
+  inp.classList.add('wrong-input');
+  document.getElementById('checkBtn').style.display = 'none';
+  document.getElementById('skipBtn').style.display  = 'none';
+  document.getElementById('nextBtn').style.display  = 'inline-block';
+  document.getElementById('feedbackBox').innerHTML  =
+    `<div class="feedback-msg" style="color:#7c7c9a">Answer: <strong style="color:#e8e8f0">${escHtml(correct_ans)}</strong></div>`;
+  document.getElementById('dictScore').innerHTML = `✓ ${correct} &nbsp; ✗ ${wrong}`;
+}
+
+function nextWord() {
+  idx++;
+  if (idx >= queue.length) { showResults(); return; }
+  renderDict();
+}
+
+function buildDiff(typed, correct) {
+  let out = '';
+  const t = typed;
+  const c = correct;
+  const len = Math.max(t.length, c.length);
+  for (let i = 0; i < len; i++) {
+    if (i >= t.length) {
+      out += `<span class="miss">${escHtml(c[i])}</span>`;
+    } else if (i >= c.length) {
+      out += `<span class="bad">${escHtml(t[i])}</span>`;
+    } else if (t[i].toLowerCase() === c[i].toLowerCase()) {
+      out += `<span class="ok">${escHtml(c[i])}</span>`;
+    } else {
+      out += `<span class="bad">${escHtml(t[i])}</span>`;
+    }
+  }
+  return out;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showResults() {
+  document.getElementById('dictArea').classList.remove('visible');
+  const res = document.getElementById('resultsArea');
+  res.classList.add('visible');
+
+  const total = queue.length;
+  const pct   = Math.round((correct / total) * 100);
+  document.getElementById('resultEmoji').textContent =
+    pct === 100 ? '🏆' : pct >= 70 ? '👍' : '📝';
+  document.getElementById('resultScore').textContent = `${correct} / ${total} correct`;
+  document.getElementById('resultSub').textContent   = `${pct}% — ${pct===100?'Perfect!':pct>=70?'Good job!':'Keep practicing!'}`;
+
+  const retryBtn = document.getElementById('retryBtn');
+  retryBtn.style.display = mistakes.length ? 'inline-block' : 'none';
+
+  const ml = document.getElementById('mistakesList');
+  ml.innerHTML = '';
+  if (mistakes.length) {
+    const h = document.createElement('div');
+    h.style.cssText = 'font-size:.78rem;color:#7c7c9a;text-align:center;text-transform:uppercase;letter-spacing:.1em;';
+    h.textContent = 'Words to review';
+    ml.appendChild(h);
+    mistakes.forEach(m => {
+      const row = document.createElement('div');
+      row.className = 'mistake-row';
+      row.innerHTML = `
+        <div>
+          <div class="mistake-label">Hebrew</div>
+          <div class="mhe">${escHtml(m.word.he)}</div>
+        </div>
+        <div style="text-align:right">
+          <div class="mistake-label">Correct</div>
+          <div class="men">${escHtml(m.word.en)}</div>
+          ${m.typed ? `<div class="myou">You wrote: ${escHtml(m.typed)}</div>` : '<div class="myou">skipped</div>'}
+        </div>
+      `;
+      ml.appendChild(row);
+    });
+  }
+}
+
+function retryMistakes() {
+  const missedWords = mistakes.map(m => m.word);
+  document.getElementById('resultsArea').classList.remove('visible');
+  document.getElementById('dictArea').classList.add('visible');
+  startDict(missedWords);
+}
+
+function restartFull() {
+  document.getElementById('resultsArea').classList.remove('visible');
+  document.getElementById('dictArea').classList.add('visible');
+  startDict(ALL_WORDS);
+}
 
 // ── LIST ──
 function buildList() {
   const area = document.getElementById('listArea');
   area.innerHTML = '';
-  words.forEach((w, i) => {
+  ALL_WORDS.forEach((w, i) => {
     const row = document.createElement('div');
     row.className = 'word-row';
     row.innerHTML = `
-      <span class="num">${i + 1}</span>
-      <span class="en">${w.en}</span>
-      <span class="he">${w.he}</span>
+      <span class="num">${i+1}</span>
+      <span class="en">${escHtml(w.en)}</span>
+      <span class="he">${escHtml(w.he)}</span>
     `;
     area.appendChild(row);
   });
 }
 
-// ── MODE SWITCH ──
-let currentMode = 'flash';
-
+// ── MODE ──
 function switchMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.tab').forEach((t, i) => {
-    t.classList.toggle('active', ['flash','quiz','list'][i] === mode);
-  });
-  document.getElementById('flashArea').classList.toggle('visible', mode === 'flash');
-  document.getElementById('quizArea').classList.toggle('visible', mode === 'quiz');
+  document.querySelectorAll('.tab').forEach((t,i) =>
+    t.classList.toggle('active', ['dict','list'][i] === mode));
+
+  document.getElementById('dictArea').classList.toggle('visible', mode === 'dict');
+  document.getElementById('resultsArea').classList.toggle('visible', false);
   document.getElementById('listArea').classList.toggle('visible', mode === 'list');
-  document.getElementById('finishScreen').classList.remove('visible');
 
-  if (mode === 'quiz') startQuiz();
   if (mode === 'list') buildList();
-  if (mode === 'flash') { flashIdx = 0; renderCard(); }
-}
-
-function showFinish(title, sub) {
-  document.getElementById('flashArea').classList.remove('visible');
-  document.getElementById('quizArea').classList.remove('visible');
-  document.getElementById('finishScreen').classList.add('visible');
-  document.getElementById('finishTitle').textContent = title;
-  document.getElementById('finishSub').textContent = sub;
-}
-
-function restart() {
-  document.getElementById('finishScreen').classList.remove('visible');
-  switchMode(currentMode);
+  if (mode === 'dict') {
+    startDict(ALL_WORDS);
+  }
 }
 
 // init
-renderCard();
+startDict(ALL_WORDS);
 </script>
 </body>
 </html>
