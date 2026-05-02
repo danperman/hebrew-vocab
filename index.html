@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>English Dictation Practice</title>
+  <title>Dictation No.5 — English Practice</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -208,7 +208,7 @@
 
 <header>
   <h1>English Dictation</h1>
-  <p>See the Hebrew — type the English</p>
+  <p>Dictation No.5 — See the Hebrew, type the English</p>
   <div class="tabs">
     <button class="tab active" onclick="switchMode('dict')">Practice</button>
     <button class="tab" onclick="switchMode('list')">Word List</button>
@@ -270,18 +270,19 @@
 
 <script>
 const ALL_WORDS = [
-  { en: 'to leave',    he: 'לעזוב'  },
-  { en: 'to bring',    he: 'להביא'  },
-  { en: 'to visit',    he: 'לבקר'   },
-  { en: 'to take',     he: 'לקחת'   },
-  { en: 'to study',    he: 'ללמוד'  },
-  { en: 'to wait',     he: 'לחכות'  },
-  { en: 'to write',    he: 'לכתוב'  },
-  { en: 'to hear',     he: 'לשמוע'  },
-  { en: 'to practice', he: 'להתאמן' },
-  { en: 'to travel',   he: 'לנסוע'  },
-  { en: 'to listen',   he: 'להקשיב' },
-  { en: 'to think',    he: 'לחשוב'  },
+  { en: 'to lose',     he: 'לאבד / להפסיד' },
+  { en: 'to teach',    he: 'ללמד'    },
+  { en: 'to paint',    he: 'לצבוע'   },
+  { en: 'to watch',    he: 'לצפות'   },
+  { en: 'to know',     he: 'לדעת'    },
+  { en: 'to climb',    he: 'לטפס'    },
+  { en: 'to collect',  he: 'לאסוף'   },
+  { en: 'to ride',     he: 'לרכב'    },
+  { en: 'to sleep',    he: 'לישון'   },
+  { en: 'to arrive',   he: 'להגיע'   },
+  { en: 'to close',    he: 'לסגור'   },
+  { en: 'to stay',     he: 'להישאר'  },
+  { en: 'to buy',      he: 'לקנות'   },
 ];
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
