@@ -408,8 +408,6 @@ function renderDict() {
   document.getElementById('hintCount').textContent = '×2';
   revealed = false;
 
-  // auto-play pronunciation
-  setTimeout(() => speak(queue[idx].en), 300);
 }
 
 function handleKey(e) {
@@ -451,6 +449,7 @@ function checkAnswer() {
   }
 
   document.getElementById('dictScore').innerHTML = `✓ ${correct} &nbsp; ✗ ${wrong}`;
+  setTimeout(() => speak(correct_ans), 300);
 }
 
 function skipWord() {
@@ -467,6 +466,7 @@ function skipWord() {
   document.getElementById('feedbackBox').innerHTML  =
     `<div class="feedback-msg" style="color:#7c7c9a">Answer: <strong style="color:#e8e8f0">${escHtml(correct_ans)}</strong></div>`;
   document.getElementById('dictScore').innerHTML = `✓ ${correct} &nbsp; ✗ ${wrong}`;
+  setTimeout(() => speak(correct_ans), 300);
 }
 
 function nextWord() {
