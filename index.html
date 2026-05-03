@@ -202,6 +202,27 @@
       font-size: 1.15rem; color: #c4b5fd; direction: rtl;
       font-family: 'David Libre', 'Times New Roman', serif;
     }
+
+    /* ── HINT ── */
+    .btn-hint {
+      background: #2a2a1a;
+      color: #facc15;
+      border: 1px solid #4a4a1a;
+    }
+    .btn-hint:hover:not(:disabled) { background: #333320; }
+    .btn-hint:disabled { opacity: 0.35; cursor: default; }
+
+    .hint-box {
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      min-height: 2rem;
+      color: #e8e8f0;
+    }
+
+    .hint-box .hr { color: #facc15; }
+    .hint-box .hb { color: #44445a; }
   </style>
 </head>
 <body>
@@ -242,12 +263,15 @@
       />
     </div>
 
+    <div class="hint-box" id="hintBox"></div>
+
     <div class="feedback-box" id="feedbackBox"></div>
 
     <div class="btn-row">
-      <button class="btn btn-ghost" id="skipBtn" onclick="skipWord()">Skip</button>
+      <button class="btn btn-ghost"  id="skipBtn"  onclick="skipWord()">Skip</button>
+      <button class="btn btn-hint"   id="hintBtn"  onclick="showHint()">💡 Hint <span id="hintCount">×2</span></button>
       <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">Check</button>
-      <button class="btn btn-green"   id="nextBtn" onclick="nextWord()" style="display:none">Next →</button>
+      <button class="btn btn-green"   id="nextBtn"  onclick="nextWord()" style="display:none">Next →</button>
     </div>
   </div>
 
@@ -293,6 +317,7 @@ let correct = 0;
 let wrong = 0;
 let mistakes = [];   // {word, typed}
 let revealed = false;
+let hintLevel = 0;   // 0 = none, 1 = first hint, 2 = second hint
 
 function startDict(wordList) {
   queue    = shuffle(wordList);
@@ -315,9 +340,14 @@ function renderDict() {
   inp.focus();
 
   document.getElementById('feedbackBox').innerHTML = '';
+  document.getElementById('hintBox').innerHTML     = '';
   document.getElementById('checkBtn').style.display = 'inline-block';
   document.getElementById('skipBtn').style.display  = 'inline-block';
+  document.getElementById('hintBtn').style.display  = 'inline-block';
+  document.getElementById('hintBtn').disabled       = false;
   document.getElementById('nextBtn').style.display  = 'none';
+  hintLevel = 0;
+  document.getElementById('hintCount').textContent = '×2';
   revealed = false;
 }
 
@@ -341,6 +371,7 @@ function checkAnswer() {
   inp.disabled = true;
   document.getElementById('checkBtn').style.display = 'none';
   document.getElementById('skipBtn').style.display  = 'none';
+  document.getElementById('hintBtn').style.display  = 'none';
   document.getElementById('nextBtn').style.display  = 'inline-block';
 
   if (isCorrect) {
@@ -370,6 +401,7 @@ function skipWord() {
   inp.classList.add('wrong-input');
   document.getElementById('checkBtn').style.display = 'none';
   document.getElementById('skipBtn').style.display  = 'none';
+  document.getElementById('hintBtn').style.display  = 'none';
   document.getElementById('nextBtn').style.display  = 'inline-block';
   document.getElementById('feedbackBox').innerHTML  =
     `<div class="feedback-msg" style="color:#7c7c9a">Answer: <strong style="color:#e8e8f0">${escHtml(correct_ans)}</strong></div>`;
@@ -380,6 +412,42 @@ function nextWord() {
   idx++;
   if (idx >= queue.length) { showResults(); return; }
   renderDict();
+}
+
+function showHint() {
+  if (hintLevel >= 2) return;
+  hintLevel++;
+
+  const ans   = queue[idx].en;
+  const hintEl = document.getElementById('hintBox');
+  hintEl.innerHTML = buildHintDisplay(ans, hintLevel);
+
+  const remaining = 2 - hintLevel;
+  const countEl = document.getElementById('hintCount');
+  if (remaining === 1) {
+    countEl.textContent = '×1';
+  } else {
+    document.getElementById('hintBtn').disabled = true;
+    countEl.textContent = '×0';
+  }
+
+  document.getElementById('answerInput').focus();
+}
+
+function buildHintDisplay(answer, level) {
+  // Split into words, reveal:
+  // level 1 → first letter of each word
+  // level 2 → first letter + last letter of each word
+  return answer.split(' ').map(word => {
+    return word.split('').map((ch, i) => {
+      const reveal =
+        (level >= 1 && i === 0) ||
+        (level >= 2 && i === word.length - 1);
+      return reveal
+        ? `<span class="hr">${escHtml(ch)}</span>`
+        : `<span class="hb">_</span>`;
+    }).join('');
+  }).join('<span style="display:inline-block;width:.6em"> </span>');
 }
 
 function buildDiff(typed, correct) {
