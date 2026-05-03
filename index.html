@@ -203,6 +203,27 @@
       font-family: 'David Libre', 'Times New Roman', serif;
     }
 
+    /* ── SPEAK ── */
+    .btn-speak {
+      position: absolute;
+      top: 0.9rem; right: 0.9rem;
+      background: #1a2a3a;
+      border: 1px solid #2a4a6a;
+      color: #60a5fa;
+      border-radius: 50%;
+      width: 2.4rem; height: 2.4rem;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .btn-speak:hover { background: #1e3448; border-color: #3a6a9a; }
+    .btn-speak.speaking { color: #93c5fd; animation: pulse 0.6s ease-in-out infinite alternate; }
+    @keyframes pulse { from { opacity: 1; } to { opacity: 0.4; } }
+
+    .he-card { position: relative; }
+
     /* ── HINT ── */
     .btn-hint {
       background: #2a2a1a;
@@ -251,6 +272,7 @@
     <div class="he-card">
       <div class="he-label">Hebrew</div>
       <div class="he-word" id="dictHe"></div>
+      <button class="btn-speak" id="speakBtn" onclick="speakCurrent()" title="Hear pronunciation">🔊</button>
     </div>
 
     <div class="input-wrap">
@@ -311,6 +333,42 @@ const ALL_WORDS = [
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
+// ── SPEECH ──
+let enVoice = null;
+
+function loadVoice() {
+  const set = () => {
+    const voices = speechSynthesis.getVoices();
+    enVoice =
+      voices.find(v => v.lang === 'en-US' && v.localService) ||
+      voices.find(v => v.lang.startsWith('en-') && v.localService) ||
+      voices.find(v => v.lang.startsWith('en')) ||
+      voices[0] || null;
+  };
+  set();
+  speechSynthesis.onvoiceschanged = set;
+}
+
+function speakCurrent() {
+  if (!queue[idx]) return;
+  speak(queue[idx].en);
+}
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang  = 'en-US';
+  utt.rate  = 0.88;
+  if (enVoice) utt.voice = enVoice;
+
+  const btn = document.getElementById('speakBtn');
+  if (btn) btn.classList.add('speaking');
+  utt.onend = utt.onerror = () => { if (btn) btn.classList.remove('speaking'); };
+
+  speechSynthesis.speak(utt);
+}
+
 let queue = [];
 let idx = 0;
 let correct = 0;
@@ -349,6 +407,9 @@ function renderDict() {
   hintLevel = 0;
   document.getElementById('hintCount').textContent = '×2';
   revealed = false;
+
+  // auto-play pronunciation
+  setTimeout(() => speak(queue[idx].en), 300);
 }
 
 function handleKey(e) {
@@ -559,6 +620,7 @@ function switchMode(mode) {
 }
 
 // init
+loadVoice();
 startDict(ALL_WORDS);
 </script>
 </body>
