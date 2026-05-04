@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dictation No.5 — English Practice</title>
+  <title>Dictation — Time Expressions</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -250,7 +250,7 @@
 
 <header>
   <h1>English Dictation</h1>
-  <p>Dictation No.5 — See the Hebrew, type the English</p>
+  <p>Time Expressions — See the Hebrew, type the English</p>
   <div class="tabs">
     <button class="tab active" onclick="switchMode('dict')">Practice</button>
     <button class="tab" onclick="switchMode('list')">Word List</button>
@@ -316,19 +316,17 @@
 
 <script>
 const ALL_WORDS = [
-  { en: 'to lose',     he: 'לאבד / להפסיד' },
-  { en: 'to teach',    he: 'ללמד'    },
-  { en: 'to paint',    he: 'לצבוע'   },
-  { en: 'to watch',    he: 'לצפות'   },
-  { en: 'to know',     he: 'לדעת'    },
-  { en: 'to climb',    he: 'לטפס'    },
-  { en: 'to collect',  he: 'לאסוף'   },
-  { en: 'to ride',     he: 'לרכב'    },
-  { en: 'to sleep',    he: 'לישון'   },
-  { en: 'to arrive',   he: 'להגיע'   },
-  { en: 'to close',    he: 'לסגור'   },
-  { en: 'to stay',     he: 'להישאר'  },
-  { en: 'to buy',      he: 'לקנות'   },
+  { en: 'in the morning',        he: 'בבוקר'       },
+  { en: 'in the afternoon',      he: 'בצהריים'     },
+  { en: 'in the evening',        he: 'בערב'        },
+  { en: 'at night',              he: 'בלילה'       },
+  { en: 'tonight',               he: 'הלילה'       },
+  { en: 'at the weekend',        he: 'בסוף שבוע'   },
+  { en: 'tomorrow',              he: 'מחר'         },
+  { en: 'today',                 he: 'היום'        },
+  { en: 'the day after tomorrow', he: 'מחרתיים'    },
+  { en: 'early',                 he: 'מוקדם'       },
+  { en: 'late',                  he: 'מאוחר'       },
 ];
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
